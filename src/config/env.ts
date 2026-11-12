@@ -1,6 +1,22 @@
+import { z } from 'zod'
 
-export const env = {
-  NODE_ENV: process.env.NODE_ENV ?? 'development',
-  PORT: Number(process.env.PORT ?? 3000),
-  DB_FILE_NAME: process.env.DB_FILE_NAME,
-} as const
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+  DB_FILE_NAME: z.string().trim().min(1, 'DB_FILE_NAME is required'),
+})
+
+export type Env = z.infer<typeof envSchema>
+
+function loadEnv(): Env {
+  const result = envSchema.safeParse(process.env)
+
+  if (!result.success) {
+    console.error('❌ Invalid environment variables:\n' + z.prettifyError(result.error))
+    process.exit(1)
+  }
+
+  return result.data
+}
+
+export const env = Object.freeze(loadEnv())
