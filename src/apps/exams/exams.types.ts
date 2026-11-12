@@ -1,13 +1,5 @@
-export interface Exam {
-  id: string
-  title: string
-  durationMinutes: number
-  createdBy: string
-  createdAt: Date
-}
+import type { exams } from './exams.schema'
 
-export interface CreateExamInput {
-  title: string
-  durationMinutes: number
-  createdBy: string
-}
+export type Exam = typeof exams.$inferSelect
+
+export type CreateExamInput = Pick<typeof exams.$inferInsert, 'title' | 'durationMinutes' | 'createdBy'>

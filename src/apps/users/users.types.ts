@@ -1,14 +1,8 @@
-export interface User {
-  id: string
-  name: string
-  email: string
-  createdAt: Date
-}
+import type { users } from './users.schema'
 
-export interface CreateUserInput {
-  name: string
-  email: string
-}
+export type User = typeof users.$inferSelect
+
+export type CreateUserInput = Pick<typeof users.$inferInsert, 'name' | 'email'>
 
 export const UserEvents = {
   Created: 'users.created',
