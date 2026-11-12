@@ -1,9 +1,18 @@
 import type { ErrorHandler, NotFoundHandler } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { ZodError } from 'zod'
 import { AppError } from '../errors/app.error'
 import { failure } from '../http/response'
 
 export const errorHandler: ErrorHandler = (err, c) => {
+  // Thrown by schema.parse() on invalid input
+  if (err instanceof ZodError) {
+    const details = err.issues.map((issue) => ({
+      field: issue.path.join('.'),
+      message: issue.message,
+    }))
+    return failure(c, 'Validation failed', { code: 'VALIDATION_ERROR', details }, 400)
+  }
   if (err instanceof AppError) {
     return failure(c, err.message, { code: err.code, details: err.details }, err.status)
   }
