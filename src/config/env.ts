@@ -1,22 +1,36 @@
-import { z } from 'zod'
+import * as v from 'valibot'
 
-const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
-  DB_FILE_NAME: z.string().trim().min(1, 'DB_FILE_NAME is required'),
+const envSchema = v.object({
+  NODE_ENV: v.optional(v.picklist(['development', 'production', 'test']), 'development'),
+  PORT: v.optional(
+    v.pipe(
+      v.string(),
+      v.transform(Number),
+      v.number('PORT must be a number'),
+      v.integer('PORT must be an integer'),
+      v.minValue(1, 'PORT must be between 1 and 65535'),
+      v.maxValue(65535, 'PORT must be between 1 and 65535'),
+    ),
+    '3000',
+  ),
+  DB_FILE_NAME: v.pipe(
+    v.string('DB_FILE_NAME is required'),
+    v.trim(),
+    v.nonEmpty('DB_FILE_NAME is required'),
+  ),
 })
 
-export type Env = z.infer<typeof envSchema>
+export type Env = v.InferOutput<typeof envSchema>
 
 function loadEnv(): Env {
-  const result = envSchema.safeParse(process.env)
+  const result = v.safeParse(envSchema, process.env)
 
   if (!result.success) {
-    console.error('❌ Invalid environment variables:\n' + z.prettifyError(result.error))
+    console.error('❌ Invalid environment variables:\n' + v.summarize(result.issues))
     process.exit(1)
   }
 
-  return result.data
+  return result.output
 }
 
 export const env = Object.freeze(loadEnv())
