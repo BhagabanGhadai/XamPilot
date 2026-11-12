@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
-import { modules } from './modules'
+import { modules } from './apps'
 import { errorHandler } from './shared/middleware/error-handler'
 
 export async function createApp() {

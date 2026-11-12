@@ -1,6 +1,6 @@
 import { eventBus } from '@/shared/events/event-bus'
 import type { AppModule } from '@/shared/types/module'
-import { UserEvents, type User } from '@/modules/users'
+import { UserEvents, type User } from '@/apps/users'
 import { examsRoutes } from './exams.routes'
 
 export { examsService } from './exams.service'

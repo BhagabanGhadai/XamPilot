@@ -1,6 +1,6 @@
 import { NotFoundError, ValidationError } from '@/shared/errors/app-error'
 // Cross-module dependency goes through the other module's public index only.
-import { usersService } from '@/modules/users'
+import { usersService } from '@/apps/users'
 import { examsRepository } from './exams.repository'
 import type { CreateExamInput, Exam } from './exams.types'
 
