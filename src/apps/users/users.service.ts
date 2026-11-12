@@ -1,5 +1,5 @@
 import { eventBus } from '@/shared/events/event-bus'
-import { NotFoundError, ValidationError } from '@/shared/errors/app-error'
+import { NotFoundError, ValidationError } from '@/shared/errors/app.error'
 import { usersRepository } from './users.repository'
 import { UserEvents, type CreateUserInput, type User } from './users.types'
 

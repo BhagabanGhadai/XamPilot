@@ -1,16 +1,17 @@
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { modules } from './apps'
-import { errorHandler } from './shared/middleware/error-handler'
+import { success } from './shared/http/response'
+import { errorHandler, notFoundHandler } from './shared/middleware/error.middleware'
 
 export async function createApp() {
   const app = new Hono()
 
   app.use('*', logger())
   app.onError(errorHandler)
-  app.notFound((c) => c.json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }, 404))
+  app.notFound(notFoundHandler)
 
-  app.get('/health', (c) => c.json({ status: 'ok' }))
+  app.get('/health', (c) => success(c, { status: 'ok' }, 'Service is healthy'))
 
   const api = new Hono()
   for (const mod of modules) {

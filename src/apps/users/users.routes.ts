@@ -1,7 +1,12 @@
 import { Hono } from 'hono'
+import { success } from '@/shared/http/response'
 import { usersService } from './users.service'
 
 export const usersRoutes = new Hono()
-  .get('/', async (c) => c.json(await usersService.list()))
-  .get('/:id', async (c) => c.json(await usersService.getById(c.req.param('id'))))
-  .post('/', async (c) => c.json(await usersService.create(await c.req.json()), 201))
+  .get('/', async (c) => success(c, await usersService.list(), 'Users fetched successfully'))
+  .get('/:id', async (c) =>
+    success(c, await usersService.getById(c.req.param('id')), 'User fetched successfully'),
+  )
+  .post('/', async (c) =>
+    success(c, await usersService.create(await c.req.json()), 'User created successfully', 201),
+  )
